@@ -1,4 +1,4 @@
-package com.roovies.java_concurrency_with_spring.racecondition.inmemory.entity;
+package com.roovies.java_concurrency_with_spring.racecondition.applicationlevel.solution.atomic;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
