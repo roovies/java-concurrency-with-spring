@@ -1,6 +1,6 @@
 package com.roovies.java_concurrency_with_spring.racecondition.inmemory.service;
 
-import com.roovies.java_concurrency_with_spring.racecondition.db.entity.Stock;
+import com.roovies.java_concurrency_with_spring.racecondition.inmemory.entity.MutexStock;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +19,7 @@ public class MutexStockService {
 
 
     // 인메모리 저장소 (DB 대신 사용)
-    private final Map<String, Stock> stockStore = new HashMap<>();
+    private final Map<String, MutexStock> stockStore = new HashMap<>();
 
     /*
      * 레이스 컨디션이 발생하는 메서드
@@ -27,7 +27,7 @@ public class MutexStockService {
      */
     public void decreaseStock(String productName, int amount) {
         // 1. 재고 조회 (동시에 여러 쓰레드가 읽을 수 있음)
-        Stock stock = stockStore.get(productName);
+        MutexStock stock = stockStore.get(productName);
         if (stock == null)
             throw new IllegalArgumentException("상품을 찾을 수 없습니다: " + productName);
 
@@ -52,7 +52,7 @@ public class MutexStockService {
         /**
          * 해당 메서드를 호출하는 시점에 락이 걸리기 때문에, 처리 속도가 느려질 수밖에 없다.
          */
-        Stock stock = stockStore.get(productName);
+        MutexStock stock = stockStore.get(productName);
         if (stock == null)
             throw new IllegalArgumentException("상품을 찾을 수 없습니다: " + productName);
 
@@ -70,7 +70,7 @@ public class MutexStockService {
      * 해결 방법2) 특정 객체에 synchronized 적용
      */
     public void decreaseStockWithObjectSynchronized(String productName, int amount) {
-        Stock stock = stockStore.get(productName);
+        MutexStock stock = stockStore.get(productName);
         if (stock == null)
             throw new IllegalArgumentException("상품을 찾을 수 없습니다: " + productName);
 
@@ -102,7 +102,7 @@ public class MutexStockService {
     public void decreaseStockWithMethodReentrantLock(String productName, int amount) {
         globalLock.lock(); // 락 획득
         try {
-            Stock stock = stockStore.get(productName);
+            MutexStock stock = stockStore.get(productName);
             if (stock == null)
                 throw new IllegalArgumentException("상품을 찾을 수 없습니다: " + productName);
 
@@ -132,7 +132,7 @@ public class MutexStockService {
         // 특정 상품에 대해서만 락 수행
         productLock.lock();
         try {
-            Stock stock = stockStore.get(productName);
+            MutexStock stock = stockStore.get(productName);
             if (stock == null)
                 throw new IllegalArgumentException("상품을 찾을 수 없습니다: " + productName);
 
@@ -154,14 +154,14 @@ public class MutexStockService {
      * 재고 초기화
      */
     public void initializeStock(Long id, String productName, int quantity) {
-        stockStore.put(productName, new Stock(id, productName, quantity));
+        stockStore.put(productName, new MutexStock(id, productName, quantity));
     }
 
     /*
      * 현재 재고 조회
      */
     public int getCurrentQuantity(String productName) {
-        Stock stock = stockStore.get(productName);
+        MutexStock stock = stockStore.get(productName);
         return stock != null ? stock.getQuantity() : 0;
     }
 }
