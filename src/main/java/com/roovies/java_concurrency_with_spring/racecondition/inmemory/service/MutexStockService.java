@@ -11,12 +11,17 @@ import java.util.concurrent.locks.ReentrantLock;
 
 @Service
 @RequiredArgsConstructor
-public class InMemoryStockService {
+public class MutexStockService {
+    /**
+     * 인메모리에서 발생될 수 있는 Race Condition 문제를 재현하고
+     * Mutex 기법(synchronized, ReentrantLock)을 통해 해결하는 로직을 기술함
+     */
+
 
     // 인메모리 저장소 (DB 대신 사용)
     private final Map<String, Stock> stockStore = new HashMap<>();
 
-    /**
+    /*
      * 레이스 컨디션이 발생하는 메서드
      * - 문제점: 여러 쓰레드가 동시에 같은 재고를 조회하고 수정할 때 데이터 꼬임 발생
      */
@@ -40,7 +45,7 @@ public class InMemoryStockService {
         stockStore.put(productName, stock);
     }
 
-    /**
+    /*
      * 해결 방법1) 메서드에 synchronized 적용
      */
     public synchronized void decreaseStockWithMethodSynchronized(String productName, int amount) {
@@ -61,7 +66,7 @@ public class InMemoryStockService {
         stockStore.put(productName, stock);
     }
 
-    /**
+    /*
      * 해결 방법2) 특정 객체에 synchronized 적용
      */
     public void decreaseStockWithObjectSynchronized(String productName, int amount) {
@@ -75,7 +80,7 @@ public class InMemoryStockService {
             Thread.currentThread().interrupt();
         }
 
-        /**
+        /*
          * 메서드 전체에 락을 거는 대신,
          * 개별 상품 객체(Stock)에 대해서만 synchronized 블록을 적용한다.
          * → 동일한 productName을 가진 요청은 순차적으로 처리되지만,
@@ -88,7 +93,7 @@ public class InMemoryStockService {
         stockStore.put(productName, stock);
     }
 
-    /**
+    /*
      * 해결 방법3) 메서드 전체에 ReentrantLock 적용
      * - 메서드에 synchronized 붙이는 거와 동일한 성능
      */
@@ -115,7 +120,7 @@ public class InMemoryStockService {
         }
     }
 
-    /**
+    /*
      * 해결 방법4) 상품별로 ReentrantLock을 관리
      * → productName 단위로 병렬 처리 가능
      */
@@ -145,14 +150,14 @@ public class InMemoryStockService {
         }
     }
 
-    /**
+    /*
      * 재고 초기화
      */
     public void initializeStock(Long id, String productName, int quantity) {
         stockStore.put(productName, new Stock(id, productName, quantity));
     }
 
-    /**
+    /*
      * 현재 재고 조회
      */
     public int getCurrentQuantity(String productName) {

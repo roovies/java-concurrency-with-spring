@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
-public class Stock {
+public class MutexStock {
     private Long id;
     private String productName;
     private Integer quantity;

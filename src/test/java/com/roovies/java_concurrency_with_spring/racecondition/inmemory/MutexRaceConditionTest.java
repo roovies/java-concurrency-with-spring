@@ -1,6 +1,6 @@
 package com.roovies.java_concurrency_with_spring.racecondition.inmemory;
 
-import com.roovies.java_concurrency_with_spring.racecondition.inmemory.service.InMemoryStockService;
+import com.roovies.java_concurrency_with_spring.racecondition.inmemory.service.MutexStockService;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -12,9 +12,9 @@ import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.*;
 
-public class InMemoryRaceConditionTest {
+public class MutexRaceConditionTest {
 
-    private final InMemoryStockService stockService = new InMemoryStockService();
+    private final MutexStockService stockService = new MutexStockService();
 
     @Test
     void 레이스_컨디션_문제_재현() throws InterruptedException {
@@ -213,5 +213,4 @@ public class InMemoryRaceConditionTest {
         System.out.println("예상 재고: 0");
         assertThat(finalQuantity).isEqualTo(0);
     }
-
 }
