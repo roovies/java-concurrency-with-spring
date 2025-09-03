@@ -1,7 +1,5 @@
-package com.roovies.java_concurrency_with_spring.racecondition.databaselevel.solution;
+package com.roovies.java_concurrency_with_spring.racecondition.databaselevel.solution.pessimisticlock;
 
-import com.roovies.java_concurrency_with_spring.racecondition.databaselevel.solution.pessimisticlock.SolutionPessimisticLockRaceConditionRepository;
-import com.roovies.java_concurrency_with_spring.racecondition.databaselevel.solution.pessimisticlock.SolutionPessimisticLockRaceConditionService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
