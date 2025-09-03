@@ -11,16 +11,16 @@ import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class MutexStockServiceTest {
+public class SolutionMutextRaceConditionServiceTest {
 
-    private final MutexStockService mutexStockService = new MutexStockService();
+    private final SolutionMutextRaceConditionService solutionMutextRaceConditionService = new SolutionMutextRaceConditionService();
 
     @Test
     void 메서드에_synchronized를_적용하면_성능은_느리지만_메서드_호출시에_락이_걸려_레이스_컨디션을_방지한다() throws InterruptedException {
         /* given: 초기 재고 100개 */
         String productName = "갤럭시 폴드7";
         int initialQuantity = 1000;
-        mutexStockService.initializeStock(1L, productName, initialQuantity);
+        solutionMutextRaceConditionService.initializeStock(1L, productName, initialQuantity);
 
         /* when: 1000개의 쓰레드가 동시에 1개씩 재고 감소를 요청함 */
         int threadCount = 1000;
@@ -35,7 +35,7 @@ public class MutexStockServiceTest {
             executor.submit(() -> {
                 try {
                     // 3. 재고 1개씩 감소
-                    mutexStockService.decreaseStockWithMethodSynchronized(productName, 1);
+                    solutionMutextRaceConditionService.decreaseStockWithMethodSynchronized(productName, 1);
                 } catch (Exception e) {
                     System.err.println("예외 발생: " + e.getMessage());
                 } finally {
@@ -49,7 +49,7 @@ public class MutexStockServiceTest {
         executor.shutdown(); // 쓰레드 풀 종료
 
         /* then: 예상 결과는 0이어야 하지만 Race Condition 때문에 0이 아닐 가능성이 높음 */
-        int finalQuantity = mutexStockService.getCurrentQuantity(productName);
+        int finalQuantity = solutionMutextRaceConditionService.getCurrentQuantity(productName);
         // 최종 재고 확인
         System.out.println("최종 재고: " + finalQuantity);
         System.out.println("예상 재고: 0");
@@ -63,7 +63,7 @@ public class MutexStockServiceTest {
         /* given: 초기 재고 100개 */
         String productName = "갤럭시 폴드7";
         int initialQuantity = 1000;
-        mutexStockService.initializeStock(1L, productName, initialQuantity);
+        solutionMutextRaceConditionService.initializeStock(1L, productName, initialQuantity);
 
         /* when: 1000개의 쓰레드가 동시에 1개씩 재고 감소를 요청함 */
         int threadCount = 1000;
@@ -78,7 +78,7 @@ public class MutexStockServiceTest {
             executor.submit(() -> {
                 try {
                     // 3. 재고 1개씩 감소
-                    mutexStockService.decreaseStockWithObjectSynchronized(productName, 1);
+                    solutionMutextRaceConditionService.decreaseStockWithObjectSynchronized(productName, 1);
                 } catch (Exception e) {
                     System.err.println("예외 발생: " + e.getMessage());
                 } finally {
@@ -92,7 +92,7 @@ public class MutexStockServiceTest {
         executor.shutdown(); // 쓰레드 풀 종료
 
         /* then: 예상 결과는 0이어야 하지만 Race Condition 때문에 0이 아닐 가능성이 높음 */
-        int finalQuantity = mutexStockService.getCurrentQuantity(productName);
+        int finalQuantity = solutionMutextRaceConditionService.getCurrentQuantity(productName);
         // 최종 재고 확인
         System.out.println("최종 재고: " + finalQuantity);
         System.out.println("예상 재고: 0");
@@ -106,7 +106,7 @@ public class MutexStockServiceTest {
         /* given: 초기 재고 1000개 */
         String productName = "갤럭시 폴드7";
         int initialQuantity = 1000;
-        mutexStockService.initializeStock(1L, productName, initialQuantity);
+        solutionMutextRaceConditionService.initializeStock(1L, productName, initialQuantity);
 
         /* when: 1000개의 비동기 작업이 동시에 실행됨 */
         int threadCount = 1000;
@@ -114,7 +114,7 @@ public class MutexStockServiceTest {
                 IntStream.range(0, threadCount)
                         .mapToObj(num -> CompletableFuture.runAsync(() -> {
                             try {
-                                mutexStockService.decreaseStockWithMethodReentrantLock(productName, 1);
+                                solutionMutextRaceConditionService.decreaseStockWithMethodReentrantLock(productName, 1);
                             } catch (Exception e) {
                                 System.err.println("예외 발생: " + e.getMessage());
                             }
@@ -127,7 +127,7 @@ public class MutexStockServiceTest {
         all.join();
 
         /* then */
-        int finalQuantity = mutexStockService.getCurrentQuantity(productName);
+        int finalQuantity = solutionMutextRaceConditionService.getCurrentQuantity(productName);
         System.out.println("최종 재고: " + finalQuantity);
         System.out.println("예상 재고: 0");
         assertThat(finalQuantity).isEqualTo(0);
@@ -138,7 +138,7 @@ public class MutexStockServiceTest {
         /* given: 초기 재고 1000개 */
         String productName = "갤럭시 폴드7";
         int initialQuantity = 1000;
-        mutexStockService.initializeStock(1L, productName, initialQuantity);
+        solutionMutextRaceConditionService.initializeStock(1L, productName, initialQuantity);
 
         /* when: 1000개의 비동기 태스크가 동시에 실행됨 */
         int threadCount = 1000;
@@ -146,7 +146,7 @@ public class MutexStockServiceTest {
                 IntStream.range(0, threadCount)
                         .mapToObj(num -> CompletableFuture.runAsync(() -> {
                             try {
-                                mutexStockService.decreaseStockWithObjectReentrantLock(productName, 1);
+                                solutionMutextRaceConditionService.decreaseStockWithObjectReentrantLock(productName, 1);
                             } catch (Exception e) {
                                 System.err.println("예외 발생: " + e.getMessage());
                             }
@@ -158,7 +158,7 @@ public class MutexStockServiceTest {
         all.join();
 
         /* then */
-        int finalQuantity = mutexStockService.getCurrentQuantity(productName);
+        int finalQuantity = solutionMutextRaceConditionService.getCurrentQuantity(productName);
         System.out.println("최종 재고: " + finalQuantity);
         System.out.println("예상 재고: 0");
         assertThat(finalQuantity).isEqualTo(0);

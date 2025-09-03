@@ -8,16 +8,16 @@ import java.util.concurrent.Executors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ProblematicStockServiceTest {
+public class AppLevelRaceConditionServiceTest {
 
-    private final ProblematicStockService problematicStockService = new ProblematicStockService();
+    private final AppLevelRaceConditionService appLevelRaceConditionService = new AppLevelRaceConditionService();
 
     @Test
     void 레이스_컨디션_문제_재현() throws InterruptedException {
         /* given: 초기 재고 100개 */
         String productName = "갤럭시 폴드7";
         int initialQuantity = 1000;
-        problematicStockService.initializeStock(1L, productName, initialQuantity);
+        appLevelRaceConditionService.initializeStock(1L, productName, initialQuantity);
 
         /* when: 1000개의 쓰레드가 동시에 1개씩 재고 감소를 요청함 */
         int threadCount = 1000;
@@ -32,7 +32,7 @@ public class ProblematicStockServiceTest {
             executor.submit(() -> {
                 try {
                     // 3. 재고 1개씩 감소
-                    problematicStockService.decreaseStock(productName, 1);
+                    appLevelRaceConditionService.decreaseStock(productName, 1);
                 } catch (Exception e) {
                     System.err.println("예외 발생: " + e.getMessage());
                 } finally {
@@ -46,7 +46,7 @@ public class ProblematicStockServiceTest {
         executor.shutdown(); // 쓰레드 풀 종료
 
         /* then: 예상 결과는 0이어야 하지만 Race Condition 때문에 0이 아닐 가능성이 높음 */
-        int finalQuantity = problematicStockService.getCurrentQuantity(productName);
+        int finalQuantity = appLevelRaceConditionService.getCurrentQuantity(productName);
         // 최종 재고 확인
         System.out.println("최종 재고: " + finalQuantity);
         System.out.println("예상 재고: 0");

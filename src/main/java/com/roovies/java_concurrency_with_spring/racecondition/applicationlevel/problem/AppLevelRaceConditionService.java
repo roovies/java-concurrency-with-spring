@@ -8,13 +8,13 @@ import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
-public class ProblematicStockService {
+public class AppLevelRaceConditionService {
     /**
      * 인메모리에서 발생될 수 있는 Race Condition 문제를 재현한다.
      */
 
     // 인메모리 저장소 (DB 대신 사용)
-    private final Map<String, ProblematicStock> stockStore = new HashMap<>();
+    private final Map<String, AppLevelRaceConditionStock> stockStore = new HashMap<>();
 
     /*
      * 레이스 컨디션이 발생하는 메서드
@@ -22,7 +22,7 @@ public class ProblematicStockService {
      */
     public void decreaseStock(String productName, int amount) {
         // 1. 재고 조회 (동시에 여러 쓰레드가 읽을 수 있음)
-        ProblematicStock stock = stockStore.get(productName);
+        AppLevelRaceConditionStock stock = stockStore.get(productName);
         if (stock == null)
             throw new IllegalArgumentException("상품을 찾을 수 없습니다: " + productName);
 
@@ -44,14 +44,14 @@ public class ProblematicStockService {
      * 재고 초기화
      */
     public void initializeStock(Long id, String productName, int quantity) {
-        stockStore.put(productName, new ProblematicStock(id, productName, quantity));
+        stockStore.put(productName, new AppLevelRaceConditionStock(id, productName, quantity));
     }
 
     /*
      * 현재 재고 조회
      */
     public int getCurrentQuantity(String productName) {
-        ProblematicStock stock = stockStore.get(productName);
+        AppLevelRaceConditionStock stock = stockStore.get(productName);
         return stock != null ? stock.getQuantity() : 0;
     }
 }

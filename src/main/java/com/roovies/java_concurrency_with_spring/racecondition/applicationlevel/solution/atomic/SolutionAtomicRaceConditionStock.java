@@ -7,13 +7,13 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 @NoArgsConstructor
 @Getter
-public class AtomicStock {
+public class SolutionAtomicRaceConditionStock {
     private Long id;
     private String productName;
     // AtomicInteger: 멀티스레드 환경에서도 안전하게 값을 증가/감소할 수 있는 원자적 변수
     private AtomicInteger quantity = new AtomicInteger();
 
-    public AtomicStock(Long id, String productName, int quantity) {
+    public SolutionAtomicRaceConditionStock(Long id, String productName, int quantity) {
         this.id = id;
         this.productName = productName;
         this.quantity = new AtomicInteger(quantity);
