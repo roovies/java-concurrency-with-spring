@@ -17,7 +17,7 @@ public class SolutionMutextRaceConditionService {
 
 
     // 인메모리 저장소 (DB 대신 사용)
-    private final Map<String, SolutionMutexRaceConditionStock> stockStore = new HashMap<>();
+    private final Map<String, SolutionMutexRaceConditionDomainEntity> stockStore = new HashMap<>();
 
     /*
      * 해결 방법1) 메서드에 synchronized 적용
@@ -26,7 +26,7 @@ public class SolutionMutextRaceConditionService {
         /**
          * 해당 메서드를 호출하는 시점에 락이 걸리기 때문에, 처리 속도가 느려질 수밖에 없다.
          */
-        SolutionMutexRaceConditionStock stock = stockStore.get(productName);
+        SolutionMutexRaceConditionDomainEntity stock = stockStore.get(productName);
         if (stock == null)
             throw new IllegalArgumentException("상품을 찾을 수 없습니다: " + productName);
 
@@ -44,7 +44,7 @@ public class SolutionMutextRaceConditionService {
      * 해결 방법2) 특정 객체에 synchronized 적용
      */
     public void decreaseStockWithObjectSynchronized(String productName, int amount) {
-        SolutionMutexRaceConditionStock stock = stockStore.get(productName);
+        SolutionMutexRaceConditionDomainEntity stock = stockStore.get(productName);
         if (stock == null)
             throw new IllegalArgumentException("상품을 찾을 수 없습니다: " + productName);
 
@@ -76,7 +76,7 @@ public class SolutionMutextRaceConditionService {
     public void decreaseStockWithMethodReentrantLock(String productName, int amount) {
         globalLock.lock(); // 락 획득
         try {
-            SolutionMutexRaceConditionStock stock = stockStore.get(productName);
+            SolutionMutexRaceConditionDomainEntity stock = stockStore.get(productName);
             if (stock == null)
                 throw new IllegalArgumentException("상품을 찾을 수 없습니다: " + productName);
 
@@ -106,7 +106,7 @@ public class SolutionMutextRaceConditionService {
         // 특정 상품에 대해서만 락 수행
         productLock.lock();
         try {
-            SolutionMutexRaceConditionStock stock = stockStore.get(productName);
+            SolutionMutexRaceConditionDomainEntity stock = stockStore.get(productName);
             if (stock == null)
                 throw new IllegalArgumentException("상품을 찾을 수 없습니다: " + productName);
 
@@ -128,14 +128,14 @@ public class SolutionMutextRaceConditionService {
      * 재고 초기화
      */
     public void initializeStock(Long id, String productName, int quantity) {
-        stockStore.put(productName, new SolutionMutexRaceConditionStock(id, productName, quantity));
+        stockStore.put(productName, new SolutionMutexRaceConditionDomainEntity(id, productName, quantity));
     }
 
     /*
      * 현재 재고 조회
      */
     public int getCurrentQuantity(String productName) {
-        SolutionMutexRaceConditionStock stock = stockStore.get(productName);
+        SolutionMutexRaceConditionDomainEntity stock = stockStore.get(productName);
         return stock != null ? stock.getQuantity() : 0;
     }
 }

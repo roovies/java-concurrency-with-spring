@@ -14,11 +14,11 @@ public class SolutionAtomicRaceConditionService {
      */
 
     // 인메모리 저장소 (DB 대신 사용)
-    private final Map<String, SolutionAtomicRaceConditionStock> stockStore = new HashMap<>();
+    private final Map<String, SolutionAtomicRaceConditionDomainEntity> stockStore = new HashMap<>();
 
     public void decreaseStock(String productName, int amount) {
         // 1. 재고 조회 (동시에 여러 쓰레드가 읽을 수 있음)
-        SolutionAtomicRaceConditionStock stock = stockStore.get(productName);
+        SolutionAtomicRaceConditionDomainEntity stock = stockStore.get(productName);
         if (stock == null)
             throw new IllegalArgumentException("상품을 찾을 수 없습니다: " + productName);
 
@@ -40,14 +40,14 @@ public class SolutionAtomicRaceConditionService {
      * 재고 초기화
      */
     public void initializeStock(Long id, String productName, int quantity) {
-        stockStore.put(productName, new SolutionAtomicRaceConditionStock(id, productName, quantity));
+        stockStore.put(productName, new SolutionAtomicRaceConditionDomainEntity(id, productName, quantity));
     }
 
     /*
      * 현재 재고 조회
      */
     public int getCurrentQuantity(String productName) {
-        SolutionAtomicRaceConditionStock stock = stockStore.get(productName);
+        SolutionAtomicRaceConditionDomainEntity stock = stockStore.get(productName);
         return stock != null ? stock.getQuantity().get() : 0;
     }
 }

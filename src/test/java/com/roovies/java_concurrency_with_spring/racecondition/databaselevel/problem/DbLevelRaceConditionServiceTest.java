@@ -1,6 +1,5 @@
 package com.roovies.java_concurrency_with_spring.racecondition.databaselevel.problem;
 
-import com.roovies.java_concurrency_with_spring.racecondition.databaselevel.repository.StockRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,11 +20,11 @@ public class DbLevelRaceConditionServiceTest {
     private DbLevelRaceConditionService raceConditionService;
 
     @Autowired
-    private StockRepository stockRepository;
+    private DbLevelRaceConditionRepository dbLevelRaceConditionRepository;
 
     @BeforeEach
     void setUp() {
-        stockRepository.deleteAll();
+        dbLevelRaceConditionRepository.deleteAll();
     }
 
     @Test

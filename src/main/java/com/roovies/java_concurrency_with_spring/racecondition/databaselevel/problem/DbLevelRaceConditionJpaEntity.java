@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
-public class DbLevelRaceConditionStock {
+public class DbLevelRaceConditionJpaEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -21,7 +21,7 @@ public class DbLevelRaceConditionStock {
     @Column(name = "quantity", nullable = false)
     private Integer quantity;
 
-    public DbLevelRaceConditionStock(String productName, Integer quantity) {
+    public DbLevelRaceConditionJpaEntity(String productName, Integer quantity) {
         this.productName = productName;
         this.quantity = quantity;
     }

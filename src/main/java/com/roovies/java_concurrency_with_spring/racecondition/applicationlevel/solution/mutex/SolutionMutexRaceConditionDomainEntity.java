@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
-public class SolutionMutexRaceConditionStock {
+public class SolutionMutexRaceConditionDomainEntity {
     private Long id;
     private String productName;
     private Integer quantity;
