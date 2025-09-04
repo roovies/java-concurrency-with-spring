@@ -7,9 +7,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class DbLevelRaceConditionService {
+public class UnSafeDBLevelRaceConditionService {
 
-    private final DbLevelRaceConditionRepository dbLevelRaceConditionRepository;
+    private final UnSafeDBLevelRaceConditionRepository unSafeDBLevelRaceConditionRepository;
 
     /**
      * 레이스 컨디션이 발생하는 메서드
@@ -17,24 +17,24 @@ public class DbLevelRaceConditionService {
      */
     public void decreaseStock(String productName, int amount) {
         // 1. 재고 조회 (여러 쓰레드가 동시에 같은 값을 읽음)
-        DbLevelRaceConditionJpaEntity dbLevelRaceConditionJpaEntity = dbLevelRaceConditionRepository.findByProductName(productName)
+        UnSafeDBLevelRaceConditionJpaEntity unSafeDBLevelRaceConditionJpaEntity = unSafeDBLevelRaceConditionRepository.findByProductName(productName)
                 .orElseThrow(() -> new IllegalArgumentException("상품을 찾을 수 없습니다: " + productName));
 
         // 2. 재고 감소 수행 (레이스 컨디션 발생 구간)
         // 이 시점에서 다른 쓰레드가 이미 재고를 변경했을 수도 있음
-        dbLevelRaceConditionJpaEntity.decrease(amount);
+        unSafeDBLevelRaceConditionJpaEntity.decrease(amount);
 
         // 3. 감소된 재고 저장
         // 나중에 실행된 트랜잭션이 먼저 실행된 트랜잭션의 결과를 덮어쓰게 됨
-        dbLevelRaceConditionRepository.save(dbLevelRaceConditionJpaEntity);
+        unSafeDBLevelRaceConditionRepository.save(unSafeDBLevelRaceConditionJpaEntity);
     }
 
     /**
      * 재고 초기화 메서드
      */
     public void initializeStock(String productName, int quantity) {
-        DbLevelRaceConditionJpaEntity dbLevelRaceConditionJpaEntity = new DbLevelRaceConditionJpaEntity(productName, quantity);
-        dbLevelRaceConditionRepository.save(dbLevelRaceConditionJpaEntity);
+        UnSafeDBLevelRaceConditionJpaEntity unSafeDBLevelRaceConditionJpaEntity = new UnSafeDBLevelRaceConditionJpaEntity(productName, quantity);
+        unSafeDBLevelRaceConditionRepository.save(unSafeDBLevelRaceConditionJpaEntity);
     }
 
     /**
@@ -42,7 +42,7 @@ public class DbLevelRaceConditionService {
      */
     @Transactional(readOnly = true)
     public int getCurrentQuantity(String productName) {
-        return dbLevelRaceConditionRepository.findByProductName(productName)
+        return unSafeDBLevelRaceConditionRepository.findByProductName(productName)
                 .map(stock -> stock.getQuantity()) // Optional의 map: Optional 안의 값을 변환할 때 사용
                 .orElse(0); // Empty일 경우 기본값을 반환 => 0
     }

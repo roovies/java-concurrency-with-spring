@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
-public class SolutionOptimisticLockRaceConditionJpaEntity {
+public class SafeDBLevelRaceConditionUsingOptimisticLockJpaEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -36,7 +36,7 @@ public class SolutionOptimisticLockRaceConditionJpaEntity {
     @Version
     private Long version;
 
-    public SolutionOptimisticLockRaceConditionJpaEntity(String productName, Integer quantity) {
+    public SafeDBLevelRaceConditionUsingOptimisticLockJpaEntity(String productName, Integer quantity) {
         this.productName = productName;
         this.quantity = quantity;
     }

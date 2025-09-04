@@ -1,4 +1,4 @@
-package com.roovies.java_concurrency_with_spring.racecondition.applicationlevel.problem;
+package com.roovies.java_concurrency_with_spring.racecondition.applicationlevel.solution.mutex;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
-public class AppLevelRaceConditionDomainEntity {
+public class SafeAppLevelRaceConditionUsingMutexDomainEntity {
     private Long id;
     private String productName;
     private Integer quantity;

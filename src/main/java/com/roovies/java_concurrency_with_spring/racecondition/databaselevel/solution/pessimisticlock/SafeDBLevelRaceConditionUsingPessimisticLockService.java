@@ -7,16 +7,16 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class SolutionPessimisticLockRaceConditionService {
+public class SafeDBLevelRaceConditionUsingPessimisticLockService {
 
-    private final SolutionPessimisticLockRaceConditionRepository raceConditionRepository;
+    private final SafeDBLevelRaceConditionUsingPessimisticLockRepository raceConditionRepository;
 
     /**
      * 비관적 락을 적용하여 동시성 문제를 해결함 => @Lock(LockModeType.PESSIMISTIC_WRITE) 추가
      */
     public void decreaseStock(String productName, int amount) {
         // 1. 조회 시점에 DB row-level exclusive lock 획득
-        SolutionPessimisticLockRaceConditionJpaEntity entity = raceConditionRepository.findByProductNameForUpdate(productName)
+        SafeDBLevelRaceConditionUsingPessimisticLockJpaEntity entity = raceConditionRepository.findByProductNameForUpdate(productName)
                 .orElseThrow(() -> new IllegalArgumentException("상품을 찾을 수 없습니다: " + productName));
 
         // 2. 안전하게 재고 감소
@@ -30,7 +30,7 @@ public class SolutionPessimisticLockRaceConditionService {
      * 재고 초기화 메서드
      */
     public void initializeStock(String productName, int quantity) {
-        SolutionPessimisticLockRaceConditionJpaEntity entity = new SolutionPessimisticLockRaceConditionJpaEntity(productName, quantity);
+        SafeDBLevelRaceConditionUsingPessimisticLockJpaEntity entity = new SafeDBLevelRaceConditionUsingPessimisticLockJpaEntity(productName, quantity);
         raceConditionRepository.save(entity);
     }
 

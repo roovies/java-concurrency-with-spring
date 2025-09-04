@@ -6,7 +6,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface DbLevelRaceConditionRepository extends JpaRepository<DbLevelRaceConditionJpaEntity, Long> {
+public interface UnSafeDBLevelRaceConditionRepository extends JpaRepository<UnSafeDBLevelRaceConditionJpaEntity, Long> {
 
-    Optional<DbLevelRaceConditionJpaEntity> findByProductName(String productName);
+    Optional<UnSafeDBLevelRaceConditionJpaEntity> findByProductName(String productName);
 }

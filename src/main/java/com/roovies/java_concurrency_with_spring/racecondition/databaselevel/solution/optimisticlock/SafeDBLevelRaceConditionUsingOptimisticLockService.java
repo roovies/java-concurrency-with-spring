@@ -9,9 +9,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class SolutionOptimisticLockRaceConditionService {
+public class SafeDBLevelRaceConditionUsingOptimisticLockService {
 
-    private final SolutionOptimisticLockRaceConditionRepository optimisticLockRepository;
+    private final SafeDBLevelRaceConditionUsingOptimisticLockRepository optimisticLockRepository;
 
     /**
      * 낙관적 락을 적용하여 동시성 문제를 해결함
@@ -23,7 +23,7 @@ public class SolutionOptimisticLockRaceConditionService {
      */
     public void decreaseStock(String productName, int amount) {
         // 1. 조회 시점에는 DB 락을 걸지 않고 단순 조회 (엔티티와 version 정보 가져옴)
-        SolutionOptimisticLockRaceConditionJpaEntity entity = optimisticLockRepository.findByProductName(productName)
+        SafeDBLevelRaceConditionUsingOptimisticLockJpaEntity entity = optimisticLockRepository.findByProductName(productName)
                 .orElseThrow(() -> new IllegalArgumentException("상품을 찾을 수 없습니다: " + productName));
 
         // 2. 재고 감소
@@ -37,7 +37,7 @@ public class SolutionOptimisticLockRaceConditionService {
      * 재고 초기화 메서드
      */
     public void initializeStock(String productName, int quantity) {
-        SolutionOptimisticLockRaceConditionJpaEntity entity = new SolutionOptimisticLockRaceConditionJpaEntity(productName, quantity);
+        SafeDBLevelRaceConditionUsingOptimisticLockJpaEntity entity = new SafeDBLevelRaceConditionUsingOptimisticLockJpaEntity(productName, quantity);
         optimisticLockRepository.save(entity);
     }
 

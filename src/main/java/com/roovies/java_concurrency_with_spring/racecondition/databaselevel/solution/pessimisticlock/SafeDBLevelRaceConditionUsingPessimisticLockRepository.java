@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface SolutionPessimisticLockRaceConditionRepository extends JpaRepository<SolutionPessimisticLockRaceConditionJpaEntity, Long> {
+public interface SafeDBLevelRaceConditionUsingPessimisticLockRepository extends JpaRepository<SafeDBLevelRaceConditionUsingPessimisticLockJpaEntity, Long> {
 
 //    @Lock(LockModeType.PESSIMISTIC_WRITE)
 //    Optional<SolutionPessimisticLockRaceConditionJpaEntity> findByProductName(String productName);
@@ -18,7 +18,7 @@ public interface SolutionPessimisticLockRaceConditionRepository extends JpaRepos
     // - findBy 뒤에는 Entity의 필드명이 와야 하는데, findByProductNameForUpdate를 하게 되면 "ProductNameForUpdate"라는 필드명을 찾으려고 시도함
     //   (없으면 오류까지 발생)
     @Lock(LockModeType.PESSIMISTIC_WRITE)
-    @Query("SELECT p FROM SolutionPessimisticLockRaceConditionJpaEntity p WHERE p.productName = :productName")
-    Optional<SolutionPessimisticLockRaceConditionJpaEntity> findByProductNameForUpdate(String productName);
+    @Query("SELECT p FROM SafeDBLevelRaceConditionUsingPessimisticLockJpaEntity p WHERE p.productName = :productName")
+    Optional<SafeDBLevelRaceConditionUsingPessimisticLockJpaEntity> findByProductNameForUpdate(String productName);
 
 }

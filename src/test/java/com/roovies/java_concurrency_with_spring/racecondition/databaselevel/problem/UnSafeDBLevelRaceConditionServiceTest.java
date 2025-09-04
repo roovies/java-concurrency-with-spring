@@ -14,17 +14,17 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest // Spring Boot 통합 테스트를 실행하기 위한 어노테이션 => 스프링 컨테이너를 띄워서 테스트 수행
 @ActiveProfiles("test") // 실행할 때 사용할 Spring 프로파일을 지정 => "test" 프로파일에 해당하는 환경설정을 적용해 테스트가 실행됨
-public class DbLevelRaceConditionServiceTest {
+public class UnSafeDBLevelRaceConditionServiceTest {
 
     @Autowired
-    private DbLevelRaceConditionService raceConditionService;
+    private UnSafeDBLevelRaceConditionService unSafeRaceConditionService;
 
     @Autowired
-    private DbLevelRaceConditionRepository dbLevelRaceConditionRepository;
+    private UnSafeDBLevelRaceConditionRepository unSafeRaceConditionRepository;
 
     @BeforeEach
     void setUp() {
-        dbLevelRaceConditionRepository.deleteAll();
+        unSafeRaceConditionRepository.deleteAll();
     }
 
     @Test
@@ -32,7 +32,7 @@ public class DbLevelRaceConditionServiceTest {
         /* given: 초기 재고 100개 */
         String productName = "갤럭시 폴드7";
         int initialQuantity = 100;
-        raceConditionService.initializeStock(productName, initialQuantity);
+        unSafeRaceConditionService.initializeStock(productName, initialQuantity);
 
         /* when: 100개의 쓰레드가 동시에 1개씩 재고 감소를 요청함 */
         int threadCount = 100;
@@ -46,7 +46,7 @@ public class DbLevelRaceConditionServiceTest {
             executor.submit(() -> {
                 try {
                     // 3. 재고 1개씩 감소
-                    raceConditionService.decreaseStock(productName, 1);
+                    unSafeRaceConditionService.decreaseStock(productName, 1);
                 } catch (Exception e) {
                     System.err.println("예외 발생: " + e.getMessage());
                 } finally {
@@ -61,7 +61,7 @@ public class DbLevelRaceConditionServiceTest {
         executor.shutdown(); // 쓰레드 풀 종료
 
         /* then: 예상 결과는 0이어야 하지만, 레이스 컨디션으로 인해 0보다 큰 값이 나올 가능성이 높음 */
-        int finalQuantity = raceConditionService.getCurrentQuantity(productName);
+        int finalQuantity = unSafeRaceConditionService.getCurrentQuantity(productName);
         // 최종 재고 확인
         System.out.println("최종 재고: " + finalQuantity);
         System.out.println("예상 재고: 0");

@@ -17,26 +17,27 @@ import static org.assertj.core.api.Assertions.*;
 
 @SpringBootTest
 @ActiveProfiles("test")
-public class SolutionOptimisticLockRaceConditionServiceTest {
+public class SafeDBLevelRaceConditionUsingOptimisticLockServiceTest {
 
     @Autowired
-    private SolutionOptimisticLockRaceConditionService optimisticLockService;
+    private SafeDBLevelRaceConditionUsingOptimisticLockService optimisticLockSafeService;
 
     @Autowired
-    private SolutionOptimisticLockRaceConditionRepository optimisticLockRepository;
+    private SafeDBLevelRaceConditionUsingOptimisticLockRepository optimisticLockSafeRepository;
 
     @BeforeEach
     public void setUp() {
-        optimisticLockRepository.deleteAll();
+        optimisticLockSafeRepository.deleteAll();
+
     }
 
     @Test
-    void 비관적_락은_트랜잭션_충돌시_ObjectOptimisticLockingFailureException을_발생시킨다() {
+    void 낙관적_락은_트랜잭션_충돌시_ObjectOptimisticLockingFailureException을_발생시킨다() {
         // given:
         // - 초기 재고 100개
         String productName = "아이폰15";
         int initialQuantity = 100;
-        optimisticLockService.initializeStock(productName, initialQuantity);
+        optimisticLockSafeService.initializeStock(productName, initialQuantity);
 
         // - Thread-safe하게 OptimisticLockException를 적재할 리스트 생성
         List<ObjectOptimisticLockingFailureException> exceptions = Collections.synchronizedList(new ArrayList<>());
@@ -48,7 +49,7 @@ public class SolutionOptimisticLockRaceConditionServiceTest {
                         .mapToObj(n -> CompletableFuture.runAsync(() -> {
                             try {
                                 // 재고 감소 시도
-                                optimisticLockService.decreaseStock(productName, 1);
+                                optimisticLockSafeService.decreaseStock(productName, 1);
                             } catch (ObjectOptimisticLockingFailureException e) {
                                 // 동시성 문제로 인한 트랜잭션 충돌 시 exceptions에 적재
                                 exceptions.add(e);
@@ -67,4 +68,25 @@ public class SolutionOptimisticLockRaceConditionServiceTest {
         assertThat(exceptions)
                 .allMatch(e -> e instanceof ObjectOptimisticLockingFailureException);
     }
+
+    @Test
+    void 트랜잭션_충돌_시_Sring_Retry가_정확히_3번_시도한다() {
+
+    }
+
+    @Test
+    void Spring_Retry가_재시도를_3번_했음에도_실패할_경우_Recover_메서드를_콜백한다() {
+
+    }
+
+    @Test
+    void 첫번째_시도에서_성공하면_Spring_Retry는_수행되지_않는다() {
+
+    }
+
+    @Test
+    void 두번째_시도에서_성공하면_Spring_Retry는_수행되지만_Recover는_수행되지_않는다() {
+
+    }
+
 }
