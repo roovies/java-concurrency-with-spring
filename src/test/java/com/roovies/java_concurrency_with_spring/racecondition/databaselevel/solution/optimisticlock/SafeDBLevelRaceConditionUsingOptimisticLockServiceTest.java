@@ -68,25 +68,4 @@ public class SafeDBLevelRaceConditionUsingOptimisticLockServiceTest {
         assertThat(exceptions)
                 .allMatch(e -> e instanceof ObjectOptimisticLockingFailureException);
     }
-
-    @Test
-    void 트랜잭션_충돌_시_Sring_Retry가_정확히_3번_시도한다() {
-
-    }
-
-    @Test
-    void Spring_Retry가_재시도를_3번_했음에도_실패할_경우_Recover_메서드를_콜백한다() {
-
-    }
-
-    @Test
-    void 첫번째_시도에서_성공하면_Spring_Retry는_수행되지_않는다() {
-
-    }
-
-    @Test
-    void 두번째_시도에서_성공하면_Spring_Retry는_수행되지만_Recover는_수행되지_않는다() {
-
-    }
-
 }
