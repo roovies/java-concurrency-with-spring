@@ -1,0 +1,19 @@
+spring:
+  datasource:
+    # H2 메모리 DB 사용, MySQL 호환 모드
+    url: jdbc:h2:mem:testdb;MODE=MySQL
+    # H2 JDBC 드라이버 지정
+    driver-class-name: org.h2.Driver
+  jpa:
+    hibernate:
+      # 매번 실행 시 테이블 생성 후 종료 시 삭제
+      ddl-auto: create-drop
+    # Hibernate가 사용할 DB 방언 지정 (H2용)
+    database-platform: org.hibernate.dialect.H2Dialect
+
+logging:
+  level:
+    org:
+      hibernate:
+        # SQL 쿼리 로그를 DEBUG 레벨로 출력
+        SQL: DEBUG
